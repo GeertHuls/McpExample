@@ -10,6 +10,11 @@ var webfrontend = builder.AddViteApp("webfrontend", "../frontend")
 
 server.PublishWithContainerFiles(webfrontend, "wwwroot");
 
-builder.AddProject<Projects.WebAppExample_McpServer>("webappexample-mcpserver");
+var mcp = builder.AddProject<Projects.WebAppExample_McpServer>("mcp-server")
+    .WithHttpHealthCheck("/health")
+    .WithReference(server);
+
+builder.AddMcpInspector("mcp-inspector", opt => opt.InspectorVersion = "0.17.5")
+    .WithMcpServer(mcp, path: "");
 
 builder.Build().Run();

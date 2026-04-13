@@ -4,5 +4,7 @@
     <Deploy />
   </Project>
   <Project Path="WebAppExample.AppHost/WebAppExample.AppHost.csproj" />
+  <Project Path="WebAppExample.McpServer/WebAppExample.McpServer.csproj" />
   <Project Path="WebAppExample.Server/WebAppExample.Server.csproj" />
+  <Project Path="WebAppExample.ServiceDefaults/WebAppExample.ServiceDefaults.csproj" />
 </Solution>
