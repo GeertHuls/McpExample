@@ -5,6 +5,7 @@ using FluentValidation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi;
 using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 
@@ -42,11 +43,60 @@ builder.Services.AddAuthentication("Bearer")
     });
 builder.Services.AddTransient<IClaimsTransformation, AdminClaimsTransformation>();
 
-//builder.Services.AddTransient<IConfigureOptions<SwaggerGenOptions>, SwaggerOptions>();
-
 builder.Services.AddControllers();
+
 builder.Services.AddEndpointsApiExplorer();
-//builder.Services.AddSwaggerGen();
+builder.Services.AddOpenApi(options =>
+{
+    var authorityUrl = builder.Configuration.GetValue<string>("Auth:Authority");
+
+    options.AddDocumentTransformer((document, context, cancellationToken) =>
+    {
+        // Ensure instances exist
+        document.Components ??= new OpenApiComponents();
+        document.Components.SecuritySchemes ??= new Dictionary<string, IOpenApiSecurityScheme>();
+
+        var oauthScopes = new Dictionary<string, string>
+            {
+                { "api", "Resource access: Carved Rock API" },
+                { "openid", "OpenID information"},
+                { "profile", "User profile information" },
+                { "email", "User email address" }
+            };
+
+        // Add OAuth2 security scheme (Authorization Code flow only)
+        document.Components.SecuritySchemes.Add("oauth2", new OpenApiSecurityScheme
+        {
+            Type = SecuritySchemeType.OAuth2,
+            Flows = new OpenApiOAuthFlows
+            {
+                AuthorizationCode = new OpenApiOAuthFlow
+                {
+                    AuthorizationUrl = new Uri($"{authorityUrl}/connect/authorize"),
+                    TokenUrl = new Uri($"{authorityUrl}/connect/token"),
+                    Scopes = oauthScopes
+                }
+            }
+        });
+
+        // Apply security requirement globally
+        document.Security = [
+            new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecuritySchemeReference("oauth2"),
+                    oauthScopes.Keys.ToList()
+                }
+            }
+        ];
+
+        // Set the host document for all elements
+        // including the security scheme references
+        document.SetReferenceHostDocument();
+
+        return Task.CompletedTask;
+    });
+});
 
 builder.Services.AddScoped<IProductLogic, ProductLogic>();
 builder.AddNpgsqlDbContext<LocalContext>("CarvedRockPostgres");
@@ -80,11 +130,12 @@ static void SetupDevelopment(WebApplication app)
         context.MigrateAndCreateData();
     }
 
-    //app.UseSwagger();
-    //app.UseSwaggerUI(options =>
-    //{
-    //    options.OAuthClientId("interactive.public");
-    //    options.OAuthAppName("CarvedRock API");
-    //    options.OAuthUsePkce();
-    //});
+    app.MapOpenApi();
+    app.UseSwaggerUI(options =>
+    {
+        options.SwaggerEndpoint("/openapi/v1.json", "v1");
+        options.OAuthClientId("interactive.public");
+        options.OAuthAppName("CarvedRock API");
+        options.OAuthUsePkce();
+    });
 }
