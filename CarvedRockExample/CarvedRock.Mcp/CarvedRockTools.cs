@@ -4,7 +4,8 @@ using System.ComponentModel;
 namespace CarvedRock.Mcp;
 
 [McpServerToolType]
-public class CarvedRockTools(IHttpClientFactory httpClientFactory)
+public class CarvedRockTools(IHttpClientFactory httpClientFactory,
+    ILogger<CarvedRockTools> logger)
 {
     [McpServerTool(Name = "get_products"), Description("Get a list of all available products.")]
     public async Task<List<ProductModel>> GetAllProductsAsync(CancellationToken cancellationToken = default)
@@ -12,6 +13,8 @@ public class CarvedRockTools(IHttpClientFactory httpClientFactory)
         var client = httpClientFactory.CreateClient("CarvedRockApi");
 
         var response = await client.GetFromJsonAsync<List<ProductModel>>("/product", cancellationToken);
+
+        logger.LogInformation("Retrieved {Count} products from Carved Rock API.", response?.Count ?? 0);
 
         return response ?? [];
     }
