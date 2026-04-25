@@ -1,13 +1,14 @@
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
+using ModelContextProtocol.Client;
 
 namespace CarvedRock.IntegrationTests.Tests;
 
-public class WebAppTests
+public class McpServerTests
 {
     private static readonly TimeSpan DefaultTimeout = TimeSpan.FromSeconds(30);
 
     [Fact]
-    public async Task GetHomePageReturnsOkStatusCode()
+    public async Task GetToolsIncludesGetProducts()
     {
         // Arrange
         var cancellationToken = TestContext.Current.CancellationToken;
@@ -31,12 +32,18 @@ public class WebAppTests
         await app.StartAsync(cancellationToken).WaitAsync(DefaultTimeout, cancellationToken);
 
         // Act
-        using var httpClient = app.CreateHttpClient("webapp");
-        await app.ResourceNotifications.WaitForResourceHealthyAsync("webapp", cancellationToken)
-            .WaitAsync(DefaultTimeout, cancellationToken);
-        using var response = await httpClient.GetAsync("/", cancellationToken);
+        var clientTransport = new HttpClientTransportOptions
+        {
+            Endpoint = app.GetEndpoint("mcp", "http"),
+            TransportMode = HttpTransportMode.StreamableHttp
+        };
+
+        var mcpClient = await McpClient.CreateAsync(new HttpClientTransport(clientTransport),
+            cancellationToken: cancellationToken);
+        var tools = await mcpClient.ListToolsAsync(cancellationToken: cancellationToken);
 
         // Assert
-        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var getProductsTool = tools.FirstOrDefault(t => t.Name == "get_products");
+        Assert.NotNull(getProductsTool);
     }
 }
