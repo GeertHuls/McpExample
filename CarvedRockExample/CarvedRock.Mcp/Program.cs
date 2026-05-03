@@ -9,7 +9,7 @@ using ModelContextProtocol.Authentication;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddCors(options =>
+builder.Services.AddCors(options => // cors is required for mcp inspector with oauth.
 {
     options.AddDefaultPolicy(policy =>
     {
@@ -60,8 +60,11 @@ builder.Services.AddMcpServer()
     .WithTools<AdminTools>()
     .AddAuthorizationFilters();
 
+builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<TokenForwarder>();
 builder.Services.AddHttpClient("CarvedRockApi", client =>
-    client.BaseAddress = new("https://api"));
+        client.BaseAddress = new("https://api"))
+    .AddHttpMessageHandler<TokenForwarder>();
 
 var app = builder.Build();
 
