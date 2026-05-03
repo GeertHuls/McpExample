@@ -1,4 +1,5 @@
 ﻿using Aspire.Hosting;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using ModelContextProtocol.Client;
 using System.Text.Json;
 
@@ -36,15 +37,34 @@ public class AppFixture : IDisposable
 
         App = await appHost.BuildAsync(cancellationToken).WaitAsync(_defaultTimeout, cancellationToken);
         await App.StartAsync(cancellationToken).WaitAsync(_defaultTimeout, cancellationToken);
+    }
+
+    public async Task<McpClient> GetMcpClient(string? user = null, string? pwd = null, CancellationToken cancelToken = default)
+    {
+        if (user == null) return await GetAnonymousMcpClient(cancelToken);
+
+        // must want an authenticated client
+        var accessToken = await AuthHelper.GetUserAccessTokenAsync(this, user, pwd!,
+            cancellationToken: cancelToken);
 
         var clientTransport = new HttpClientTransportOptions
         {
             Endpoint = App.GetEndpoint("mcp", "http"),
+            TransportMode = HttpTransportMode.StreamableHttp,
+            AdditionalHeaders = new Dictionary<string, string>()
+        };
+        clientTransport.AdditionalHeaders.Add("Authorization", $"Bearer {accessToken}");
+        return await McpClient.CreateAsync(new HttpClientTransport(clientTransport), cancellationToken: cancelToken);
+    }
+
+    private async Task<McpClient> GetAnonymousMcpClient(CancellationToken cancelToken = default)
+    {
+        var clientTransport = new HttpClientTransportOptions
+        {
+            Endpoint = App.GetEndpoint("mcp", "https"),
             TransportMode = HttpTransportMode.StreamableHttp
         };
-
-        McpClient = await McpClient.CreateAsync(new HttpClientTransport(clientTransport),
-            cancellationToken: cancellationToken);
+        return await McpClient.CreateAsync(new HttpClientTransport(clientTransport), cancellationToken: cancelToken);
     }
 
     public void Dispose()

@@ -213,7 +213,7 @@ namespace Duende.IdentityServer.Demo
 
                 new Client
                 {
-                    // Resource Owner Password grant for testing only - not for production or real use cases
+                    // Resource Owner Password grant used in integration tests - not for production or real use cases
                     ClientId = "testing.confidential",  
                     ClientName = "Client for use in Testing Different Tokens",
                     AllowedGrantTypes = GrantTypes.ResourceOwnerPassword,
