@@ -57,7 +57,8 @@ builder.Services.AddMcpServer()
         options.Stateless = true; // important for scaling
     })
     .WithTools<CarvedRockTools>()
-    .WithTools<AdminTools>();
+    .WithTools<AdminTools>()
+    .AddAuthorizationFilters();
 
 builder.Services.AddHttpClient("CarvedRockApi", client =>
     client.BaseAddress = new("https://api"));

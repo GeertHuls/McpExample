@@ -15,5 +15,6 @@
   <Project Path="CarvedRock.Domain/CarvedRock.Domain.csproj" />
   <Project Path="CarvedRock.Mcp/CarvedRock.Mcp.csproj" />
   <Project Path="CarvedRock.WebApp/CarvedRock.WebApp.csproj" />
+  <Project Path="demo.duendesoftware.com/Duende.IdentityServer.Demo.csproj" />
   <Project Path="MailKit.Client/MailKit.Client.csproj" />
 </Solution>
