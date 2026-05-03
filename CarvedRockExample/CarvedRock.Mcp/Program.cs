@@ -1,5 +1,6 @@
 using CarvedRock.Core;
 using CarvedRock.Mcp;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ModelContextProtocol.AspNetCore.Authentication;
@@ -53,14 +54,23 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddAuthorization();
 
+builder.Services.AddTransient<IClaimsTransformation, AdminClaimsTransformation>();
+
 builder.Services.AddMcpServer()
     .WithHttpTransport(options =>
     {
         options.Stateless = true; // important for scaling
+        options.ConfigureSessionOptions = async (httpCtx, options, cancelToken) =>
+        {
+            // debugging logged in user:
+            var user = httpCtx.User;
+        };
     })
-    .WithTools<CarvedRockTools>()
-    .WithTools<AdminTools>()
-    .AddAuthorizationFilters();
+    .AddAuthorizationFilters()
+    .WithToolsFromAssembly()
+    //.WithTools<CarvedRockTools>()
+    //.WithTools<AdminTools>()
+    ;
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<TokenForwarder>();

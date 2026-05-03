@@ -1,4 +1,5 @@
 ﻿using Duende.IdentityModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -9,6 +10,7 @@ using static ModelContextProtocol.Protocol.ElicitRequestParams;
 
 namespace CarvedRock.Mcp;
 
+[Authorize(Roles = "admin")]
 [McpServerToolType]
 public class AdminTools(IHttpClientFactory httpClientFactory, ILogger<AdminTools> logger,
     IHttpContextAccessor httpCtxAccessor)
