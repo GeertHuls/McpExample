@@ -43,13 +43,17 @@ public static class Extensions
         builder.Services.AddOpenTelemetry()
             .WithMetrics(metrics =>
             {
-                metrics.AddAspNetCoreInstrumentation()
+                metrics
+                    .AddMeter("Experimental.ModelContextProtocol") // ("*") to capture all meters
+                    .AddAspNetCoreInstrumentation()
                     .AddHttpClientInstrumentation()
                     .AddRuntimeInstrumentation();
             })
             .WithTracing(tracing =>
             {
-                tracing.AddAspNetCoreInstrumentation(options =>
+                tracing
+                .AddSource("Experimental.ModelContextProtocol") // ("*") to capture all sources
+                .AddAspNetCoreInstrumentation(options =>
                 {
                     options.Filter = (httpContext) =>
                     {

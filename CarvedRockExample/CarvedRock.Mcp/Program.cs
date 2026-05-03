@@ -1,13 +1,16 @@
+using CarvedRock.Core;
 using CarvedRock.Mcp;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using ModelContextProtocol.AspNetCore.Authentication;
 using ModelContextProtocol.Authentication;
+using System.Security.Claims;
 
 // Example of a protected MCP server with OAuth authentication:
 // https://github.com/modelcontextprotocol/csharp-sdk/blob/main/samples/ProtectedMcpServer/Program.cs
 
 var builder = WebApplication.CreateBuilder(args);
+builder.AddServiceDefaults();
 
 builder.Services.AddCors(options => // cors is required for mcp inspector with oauth.
 {
@@ -22,8 +25,6 @@ builder.Services.AddCors(options => // cors is required for mcp inspector with o
 var authServer = builder.Configuration.GetValue<string>("AuthServer")!;
 var mcpServerUrl = builder.Configuration.GetValue<string>("McpServerUrl")!;
 
-builder.AddServiceDefaults();
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultChallengeScheme = McpAuthenticationDefaults.AuthenticationScheme;
@@ -37,6 +38,7 @@ builder.Services.AddAuthentication(options =>
                 ValidateIssuerSigningKey = true,
                 ValidAudience = mcpServerUrl,
                 ValidIssuer = authServer,
+                NameClaimType = ClaimTypes.Email // have the mail address included as part of the log entry as the name of the user.
             };
         })
         .AddMcp(options =>
@@ -77,6 +79,8 @@ app.MapDefaultEndpoints();
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiddleware<UserScopeMiddleware>();
 
 app.MapMcp()
     .RequireAuthorization();  // this would require auth for **all** connections (even "initialize")
