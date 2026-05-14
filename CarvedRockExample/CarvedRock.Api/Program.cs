@@ -10,7 +10,14 @@ using System.Diagnostics;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddServiceDefaults(); 
+builder.AddServiceDefaults();
+
+// Docs: https://aspire.dev/integrations/ai/ollama/ollama-connect
+//builder.AddOllamaApiClient("ollama-mistral3")
+//    .AddChatClient();
+
+builder.AddOllamaApiClient("ollama-llama3")
+       .AddChatClient();
 
 builder.Services.AddProblemDetails(opts => // built-in problem details support
     opts.CustomizeProblemDetails = (ctx) =>

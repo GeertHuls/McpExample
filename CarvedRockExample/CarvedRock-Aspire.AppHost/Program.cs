@@ -3,10 +3,29 @@ var builder = DistributedApplication.CreateBuilder(args);
 var carvedrockdb = builder.AddPostgres("postgres")
                           .AddDatabase("CarvedRockPostgres");
 
+// https://aspire.dev/integrations/ai/ollama/ollama-get-started
+// https://aspire.dev/integrations/ai/ollama/ollama-host
+var ollama = builder.AddOllama("ollama"/*, port: 11434*/)
+    .WithDataVolume()
+    .WithGPUSupport()
+    .WithOpenWebUI()
+    //.WithImageTag("latest")
+    ;
+
+// Example using Hugging face model:
+//var llama = ollama.AddHuggingFaceModel(
+//    "llama",
+//    "bartowski/Llama-3.2-1B-Instruct-GGUF:IQ4_XS");
+
+//var ministral3 = ollama.AddModel("ollama-ministral3", "ministral-3");
+var llama3 = ollama.AddModel("ollama-llama3", "llama3");
+
 var idsrv = builder.AddProject<Projects.Duende_IdentityServer_Demo>("idsrv");
 
 var api = builder.AddProject<Projects.CarvedRock_Api>("api")
     .WithReference(carvedrockdb)
+    //.WithReference(ministral3)
+    .WithReference(llama3)
     .WaitFor(carvedrockdb)
     .WithEnvironment("Auth__Authority", idsrv.GetEndpoint("https"))
     .WithHttpHealthCheck("/health");
