@@ -13,10 +13,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.AddServiceDefaults();
 
 // Docs: https://aspire.dev/integrations/ai/ollama/ollama-connect
-//builder.AddOllamaApiClient("ollama-mistral3")
+//builder.AddOllamaApiClient("ollama-ministral3")
 //    .AddChatClient();
 
-builder.AddOllamaApiClient("ollama-llama3")
+builder.AddOllamaApiClient("ollama-llama31")
        .AddChatClient();
 
 builder.Services.AddProblemDetails(opts => // built-in problem details support

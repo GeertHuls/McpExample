@@ -9,7 +9,7 @@ namespace CarvedRock.Domain;
 public class ProductLogic(ILogger<ProductLogic> logger, ICarvedRockRepository repo) : IProductLogic
 {
     public async Task<IEnumerable<Product>> GetProductsForCategoryAsync(string category)
-    {               
+    {
         logger.LogInformation("Getting products in logic for {category}", category);
         return await repo.GetProductsAsync(category);
     }
