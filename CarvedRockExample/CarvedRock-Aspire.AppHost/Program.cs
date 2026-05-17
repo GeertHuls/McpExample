@@ -39,12 +39,15 @@ builder.AddProject<Projects.CarvedRock_WebApp>("webapp")
     .WithReference(mailpit)
     .WaitFor(mailpit)
     .WaitFor(api)
+    .WithEnvironment("Auth__Authority", idsrv.GetEndpoint("https"))
     .WithHttpHealthCheck("/health");
 
 var mcp = builder.AddProject<Projects.CarvedRock_Mcp>("mcp")
     .WithReference(api)
     .WithEnvironment("AuthServer", idsrv.GetEndpoint("https")) // use client id interactive.public, without password
     .WithHttpHealthCheck("/health");
+
+api.WithReference(mcp);
 
 builder.AddMcpInspector("mcp-inspector", opt => opt.InspectorVersion = "0.17.5")
     .WithMcpServer(mcp, path: "");

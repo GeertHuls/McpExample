@@ -19,6 +19,8 @@ builder.AddServiceDefaults();
 builder.AddOllamaApiClient("ollama-llama31")
        .AddChatClient();
 
+builder.Services.AddHttpContextAccessor();
+
 builder.Services.AddProblemDetails(opts => // built-in problem details support
     opts.CustomizeProblemDetails = (ctx) =>
     {

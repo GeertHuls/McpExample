@@ -1,5 +1,6 @@
 using CarvedRock.Core;
 using CarvedRock.WebApp;
+using Duende.AccessTokenManagement.OpenIdConnect;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.IdentityModel.Tokens;
@@ -34,7 +35,7 @@ builder.Services.AddAuthentication(options =>
     {
         NameClaimType = "email"
     };
-    options.SaveTokens = true;
+    options.SaveTokens = true; // Needs to be enabled to make the token forwarding work in the AI http client, registered below.
 });
 
 builder.Services.AddTransient<IClaimsTransformation, AdminClaimsTransformation>();
@@ -43,6 +44,10 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddRazorPages();
 builder.Services.AddHttpClient();
 builder.Services.AddHttpClient<IProductService, ProductService>();
+
+builder.Services.AddOpenIdConnectAccessTokenManagement();
+builder.Services.AddUserAccessTokenHttpClient("AI",  // Register token forwarding client for API calls used in Listing page code-behind.
+       configureClient: client => client.BaseAddress = new("https://api"));
 
 builder.AddMailKitClient("smtp");
 builder.Services.AddScoped<IEmailSender, EmailService>();
