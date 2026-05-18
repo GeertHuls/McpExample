@@ -55,14 +55,14 @@ namespace Duende.IdentityServer.Demo
         public static IEnumerable<ApiResource> ApiResources =>
             new List<ApiResource>
             {
-                new ApiResource("api", "Demo API", new[] { "name", "email" })
+                new ApiResource("api", "Demo API", new[] { "sub", "name", "email" })
                 {
                     ApiSecrets = { new Secret("secret".Sha256()) },
                     
                     Scopes = { "api" }
                 },
 
-                new ApiResource("http://localhost:5253/", "Local MCP Server", new[] { "name", "email" })
+                new ApiResource("http://localhost:5253/", "Local MCP Server", new[] { "sub", "name", "email" })
                 {
                     ApiSecrets = { new Secret("secret".Sha256()) },
 
