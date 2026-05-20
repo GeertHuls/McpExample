@@ -67,6 +67,7 @@ builder.Services.AddMcpServer()
         };
     })
     .AddAuthorizationFilters()
+    .WithPromptsFromAssembly()
     .WithToolsFromAssembly()
     //.WithTools<CarvedRockTools>()
     //.WithTools<AdminTools>()
