@@ -1,0 +1,13 @@
+{
+    "servers": {
+        "CarvedRock.Developer": {
+            "type": "stdio",
+            "command": "dotnet",
+            "args": [
+                "run",
+                "--project",
+                "CarvedRock.Developer.csproj"
+            ],
+        }
+    }
+}
