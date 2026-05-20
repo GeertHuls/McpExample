@@ -23,7 +23,9 @@
     <PackageId>SampleMcpServer</PackageId>
     <PackageVersion>0.1.0-beta</PackageVersion>
     <PackageTags>AI; MCP; server; stdio</PackageTags>
-    <Description>An MCP server using the MCP C# SDK.</Description>
+    <Description>A sample MCP server that can create test data for CarvedRock products using the MCP C# SDK.</Description>
+    <PackageProjectUrl>https://github.com/GeertHuls/McpExample</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/GeertHuls/McpExample</RepositoryUrl>
   </PropertyGroup>
 
   <!-- Include additional files for browsing the MCP server. -->

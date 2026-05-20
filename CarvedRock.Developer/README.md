@@ -3,6 +3,11 @@
 This README was created using the C# MCP server project template.
 It demonstrates how you can easily create an MCP server using C# and publish it as a NuGet package.
 
+## Tools
+
+- `get_random_number`: The default tool included in the template; takes min and max values to define the range of the random number to return, and they default to 1 and 100.
+- `get_test_products`: A tool to generate test product records for the simple CarvedRock `Product` class using the [Bogus](https://www.nuget.org/packages/Bogus) library.  Takes an input parameter for the number you want to generate (default is 10).
+
 The MCP server is built as a self-contained application and does not require the .NET runtime to be installed on the target machine.
 However, since it is self-contained, it must be built for each target platform separately.
 By default, the template is configured to build for:
