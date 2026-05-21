@@ -7,7 +7,7 @@ var carvedrockdb = builder.AddPostgres("postgres")
 // https://aspire.dev/integrations/ai/ollama/ollama-host
 var ollama = builder.AddOllama("ollama"/*, port: 11434*/)
     .WithDataVolume()
-    .WithGPUSupport()
+    .WithGPUSupport(OllamaGpuVendor.Nvidia)
     //.WithOpenWebUI()
     //.WithImageTag("0.24.0") // does not work
     //.WithImageTag("0.15.0") // does not work
