@@ -5,8 +5,10 @@ project.
 
 Run it!
 
-> **N O T E:** The first time you run the app, it may take a little longer to start
-if you don't already have the Postgres container images downloaded.
+> **N O T E:** This code is based on the [using-csharp-mcp-sdk](https://github.com/dahlsailrunner/using-csharp-mcp-sdk) course repo. The first time you run the app, it may take a little longer to start
+if you don't already have the Postgres and Ollama container images downloaded.
+
+Additionally, since there will be a LLM running locally on your computer, the Ollama runtime will start downloading the [Llama3.1](https://ollama.com/library/llama3.1) model which is yet about an additional 3GB. The download progress of the model will be visible on the Aspire dashboard. Next, you might also want to configure where the model will be running, preferrably on the GPU, where you can specify the manufacturer (either Nvidea or AMD). For the Llama 3.1 model, a graphics card with a minimum of 8GB of VRam is recommended. Check the 'builder.AddOllama(...)' section in the app host project for other configuration options.
 
 The Aspire Dashboard will be launched and that will have links for the different
 projects.  Start by clicking the link for the WebApp project!
